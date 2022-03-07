@@ -1,4 +1,9 @@
+#path <- getwd()
+#Must have this
 setwd('/home/striker/Desktop/UCLA/BS Research Paper/SideWork')
+
+#install.packages("stringr", repos='http://cran.us.r-project.org')
+library("stringr")
 
 #As a start, try turning the bit that parses the .partitions file into a function 
 #that returns a data frame with three columns, 
@@ -8,55 +13,34 @@ setwd('/home/striker/Desktop/UCLA/BS Research Paper/SideWork')
 #and the third being the ending offset.
 
 parsing_partitions <- function(file_name) {
-  #Need to return a dataframe with 3 columns:
-  #1st column: The gene name
-  gene_names <- c()
-  #2nd column: The starting offset
-  starting_offset <- c()
-  #3rd column: The ending offset
-  ending_offset <- c()
-  
+  path <- getwd()
   
   fileName <- file_name
-  partions_strings <- readChar(fileName, file.info(fileName)$size)
   
-  partion_strings_newline_split <- scan(text = partions_strings, what = "\n")
-  print(partion_strings_newline_split)
+  #using readlines instead of scan and capturing the relevant text from each line using str_match
+  full_name <- paste("/", fileName, sep="")
+  readLinesText <- readLines(paste(path, full_name, sep = ""))
+  print("The output of readLines is:")
+  print(readLinesText)
+  #Now have a vector of the lines
   
-
-  gene_places <- c()
-  
-  n = length(partion_strings_newline_split)
-  #print(n)
-  for (i in 1:n) {
-    #print(i)
-    #print(partion_strings_newline_split[i])
-    if(partion_strings_newline_split[i] == "DNA,"){
-      #i is "DNA,"
-      #i+1 is the name
-      gene_names <- c(gene_names, partion_strings_newline_split[i+1])
-
-      #need to break apart [i+3] and get the value after "-"
-      #i+3 is the range
-      #print(partion_strings_newline_split[i+3])
-      #split_values <- scan(text = partion_strings_newline_split[i+3], what = "-")
-      split_values <- strsplit(partion_strings_newline_split[i+3], split = "-")
-      
-      starting_offset<-c(starting_offset, strtoi(split_values[[1]][1]))
-      ending_offset<-c(ending_offset, strtoi(split_values[[1]][2]))
-      
-    }
-  }
-  
-  df <- data.frame(gene_names, starting_offset, ending_offset)
-  
-  return (df)
+  #now use str_match
+  #https://regex101.com/r/hyUgZh/1
+  #It is vectorized and so I don't need to write a for loop
+  #HAVE TO USE an extra for every '\'!, and use the website:
+  #https://regex101.com/
+  pattern <- "(\\w+),\\s*(\\w+)\\s*=\\s*(\\d+)\\s*-\\s*(\\d+)"
+  df <- as.data.frame(str_match(readLinesText, pattern))
+  #Removing the first 2 columns as they contained the full string and "DNA, "
+  returned_df <- subset(df, select = -c(V1, V2))
+  #Renaming the remaining 3 columns in proper fashion
+  names(returned_df)[names(returned_df) == 'V3'] <- 'gene_Name'
+  names(returned_df)[names(returned_df) == 'V4'] <- 'start_Offset'
+  names(returned_df)[names(returned_df) == 'V5'] <- 'ending_Offset'
+  return (returned_df)
 }
 
 #testing
-#fileName <- 'final_alignment.partitions'
-
-#partition_df <- parsing_partitions(fileName)
-
-
-#print(partition_df)
+# fileName <- 'final_alignment.partitions'
+# partition_df <- parsing_partitions(fileName)
+# print(partition_df)
