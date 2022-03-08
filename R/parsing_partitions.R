@@ -38,7 +38,7 @@ parsing_partitions <- function(file_name) {
   needed_data <- matched[, 3:5]
   df <- as.data.frame(needed_data)
   #Renaming the remaining 3 columns in proper fashion
-  colnames(df) <- c("gene_Name", "start_Offset", "ending_Offset")
+  colnames(df) <- c("gene_Name", "starting_Offset", "ending_Offset")
   return (df)
 }
 
