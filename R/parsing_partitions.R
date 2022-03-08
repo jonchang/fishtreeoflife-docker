@@ -1,11 +1,7 @@
-#path <- getwd()
-#Must have this
-setwd('/home/striker/Desktop/UCLA/BS Research Paper/SideWork')
-
 #install.packages("stringr", repos='http://cran.us.r-project.org')
 library("stringr")
 
-#As a start, try turning the bit that parses the .partitions file into a function 
+#turning the bit that parses the .partitions file into a function 
 #that returns a data frame with three columns, 
 
 #the first being the gene name, 
@@ -13,15 +9,9 @@ library("stringr")
 #and the third being the ending offset.
 
 parsing_partitions <- function(file_name) {
-  path <- getwd()
-  
-  fileName <- file_name
   
   #using readlines instead of scan and capturing the relevant text from each line using str_match
-  full_name <- paste("/", fileName, sep="")
-  readLinesText <- readLines(paste(path, full_name, sep = ""))
-  print("The output of readLines is:")
-  print(readLinesText)
+  readLinesText <- readLines(file_name)
   #Now have a vector of the lines
   
   #now use str_match
@@ -29,18 +19,34 @@ parsing_partitions <- function(file_name) {
   #It is vectorized and so I don't need to write a for loop
   #HAVE TO USE an extra for every '\'!, and use the website:
   #https://regex101.com/
+  #1st: "Data," : (\\w+),
+  #2nd: space: \\s*
+  #3rd: gene name: (\\w+)
+  #4th: space: \\s*
+  #5th: =: =
+  #6th: space: \\s*
+  #7th: starting sequence: (\\d+)
+  #8th: space: \\s*
+  #9th: -: -
+  #10th: space: \\s*
+  #11th: ending sequence: (\\d+)
+  #Overall: DNA, (name) = (start seq) - (end seq)
   pattern <- "(\\w+),\\s*(\\w+)\\s*=\\s*(\\d+)\\s*-\\s*(\\d+)"
-  df <- as.data.frame(str_match(readLinesText, pattern))
+  #extract relevant contents before converting to a data frame
+  matched <- str_match(readLinesText, pattern)
   #Removing the first 2 columns as they contained the full string and "DNA, "
-  returned_df <- subset(df, select = -c(V1, V2))
+  needed_data <- matched[, 3:5]
+  df <- as.data.frame(needed_data)
   #Renaming the remaining 3 columns in proper fashion
-  names(returned_df)[names(returned_df) == 'V3'] <- 'gene_Name'
-  names(returned_df)[names(returned_df) == 'V4'] <- 'start_Offset'
-  names(returned_df)[names(returned_df) == 'V5'] <- 'ending_Offset'
-  return (returned_df)
+  colnames(df) <- c("gene_Name", "start_Offset", "ending_Offset")
+  return (df)
 }
 
 #testing
-# fileName <- 'final_alignment.partitions'
-# partition_df <- parsing_partitions(fileName)
+# #Must have this
+# setwd('/home/striker/Desktop/UCLA/BS Research Paper/SideWork')
+# path <- getwd()
+# fileName <- '/final_alignment.partitions'
+# full_name <- paste(path, fileName, sep = "")
+# partition_df <- parsing_partitions(full_name)
 # print(partition_df)
