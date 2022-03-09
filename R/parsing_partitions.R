@@ -5,12 +5,12 @@ requireNamespace("stringr")
 parsing_partitions <- function(file_name) {
   readLinesText <- readLines(file_name)
 
-  # Capture groups: (DNA), (name) = (start seq) - (end seq)
-  pattern <- "(\\w+),\\s*(\\w+)\\s*=\\s*(\\d+)\\s*-\\s*(\\d+)"
+  # Capture groups: DNA, (name) = (start seq) - (end seq)
+  pattern <- "\\w+,\\s*(\\w+)\\s*=\\s*(\\d+)\\s*-\\s*(\\d+)"
   matched <- stringr::str_match(readLinesText, pattern)
 
-  # Drop full match and captured "DNA" string
-  needed_data <- matched[, 3:5]
+  # Drop captured full match
+  needed_data <- matched[, -1]
   df <- as.data.frame(needed_data)
   colnames(df) <- c("gene_Name", "starting_Offset", "ending_Offset")
   return (df)
