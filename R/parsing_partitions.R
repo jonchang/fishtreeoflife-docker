@@ -9,9 +9,7 @@ parsing_partitions <- function(file_name) {
   pattern <- "\\w+,\\s*(\\w+)\\s*=\\s*(\\d+)\\s*-\\s*(\\d+)"
   matched <- stringr::str_match(readLinesText, pattern)
 
-  # Drop captured full match
-  needed_data <- matched[, -1]
-  df <- as.data.frame(needed_data)
-  colnames(df) <- c("gene_Name", "starting_Offset", "ending_Offset")
-  return (df)
+  data.frame(gene = matched[, 2],
+             starting_offset = as.integer(matched[, 3]),
+             ending_offset = as.integer(matched[, 4]))
 }
