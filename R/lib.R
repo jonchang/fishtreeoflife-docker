@@ -54,3 +54,17 @@ get_rank_trees <- function(tree, spp) {
     rogues <- setdiff(mrca_tree$tip.label, pruned_tree$tip.label)
     list(rogues = rogues, mrca_tree = mrca_tree, pruned_tree = pruned_tree)
 }
+
+# Parse a RAxML-style .partitions file into a data frame containing
+# the gene name, starting offset, and ending offset.
+parse_partitions <- function(partitions_file) {
+    readLinesText <- readLines(file_name)
+
+    # Capture groups: DNA, (name) = (start seq) - (end seq)
+    pattern <- "\\w+,\\s*(\\w+)\\s*=\\s*(\\d+)\\s*-\\s*(\\d+)"
+    matched <- stringr::str_match(readLinesText, pattern)
+
+    data.frame(gene = matched[, 2],
+               starting_offset = as.integer(matched[, 3]),
+               ending_offset = as.integer(matched[, 4]))
+}
