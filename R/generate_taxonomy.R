@@ -7,6 +7,13 @@ library(future)
 library(listenv)
 library(jsonlite)
 
+library(rjson)
+
+#source("list_genes_and_their_species.R")
+
+#source("list_species_and_their_species.R")
+
+source("df_list_genes_and_their_species.R")
 
 source("R/lib.R")
 
@@ -56,10 +63,37 @@ two_col_to_list <- function(df) {
 }
 
 generate_rank_data <- function(df, current_rank, downloadpath) {
+    #Austyn's setup
+    path <- getwd()
+    #print("Path is:")
+    #print(path)
+    partition_file <- '/final_alignment.partitions'
+    DNA_file <- "Labridae.phylip.xz"
+    #DNA_file <- df
+    full_name <- paste(path, partition_file, sep = "")
+    list_of_genes_and_species <- df_list_genes_and_their_species(full_name, DNA_file)
+    sampled_loci <- list(sampled_loci = list_of_genes_and_species)
+    
+    #print("Printing genes and their species")
+    #print(list_of_genes_and_species)
+    
+    json_format_for_genes_and_their_species = toJSON(sampled_loci)
+    
+    #print("Printing json_format_for_genes_and_their_species")
+    #print(json_format_for_genes_and_their_species)
+    
+    write(json_format_for_genes_and_their_species, "testiing_JSON_1.json")
+    
+    #list_of_species_and_genes <- list_species_and_their_species(full_name, DNA_file)
+    #print("Prining species and their genes")
+    #print(list_of_species_and_genes)
+    
     out <- list()
     out$species <- df$genus.species
     out$sampled_species <- out$species[out$species %in% tips]
     out$unsampled_species <- out$species[!out$species %in% tips]
+    #Austyns Additions
+    out$genes <- list_of_genes_and_species
     taxonomy <- gather(df, key = "rank", value = "name", all_of(wanted_ranks)) %>% select(name, rank) %>% as.data.frame()
     out$taxonomy <- split(taxonomy, taxonomy$rank) %>% lapply(function(x) {
                x <- unique(x[["name"]])
