@@ -7,6 +7,11 @@ library(future)
 library(listenv)
 library(jsonlite)
 
+library(rjson)
+
+source("df_list_genes_and_their_species.R")
+
+source("apply_df_list_genes_and_their_species.R")
 
 source("R/lib.R")
 
@@ -56,10 +61,14 @@ two_col_to_list <- function(df) {
 }
 
 generate_rank_data <- function(df, current_rank, downloadpath) {
+    list_of_genes_and_species <- apply_df_vectors_genes_and_their_species(full_name, DNA_file)
+    total_list_genes_and_their_species <- list(sampled_loci = list_of_genes_and_species)
+    
     out <- list()
     out$species <- df$genus.species
     out$sampled_species <- out$species[out$species %in% tips]
     out$unsampled_species <- out$species[!out$species %in% tips]
+    out$genes <- total_list_genes_and_their_species
     taxonomy <- gather(df, key = "rank", value = "name", all_of(wanted_ranks)) %>% select(name, rank) %>% as.data.frame()
     out$taxonomy <- split(taxonomy, taxonomy$rank) %>% lapply(function(x) {
                x <- unique(x[["name"]])
