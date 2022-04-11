@@ -57,14 +57,38 @@ get_rank_trees <- function(tree, spp) {
 
 # Parse a RAxML-style .partitions file into a data frame containing
 # the gene name, starting offset, and ending offset.
-parse_partitions <- function(partitions_file) {
-    readLinesText <- readLines(file_name)
-
+parse_partitions <- function(partition_file) {
     # Capture groups: DNA, (name) = (start seq) - (end seq)
     pattern <- "\\w+,\\s*(\\w+)\\s*=\\s*(\\d+)\\s*-\\s*(\\d+)"
-    matched <- stringr::str_match(readLinesText, pattern)
+    matched <- stringr::str_match(readLines(partition_file), pattern)
 
     data.frame(gene = matched[, 2],
                starting_offset = as.integer(matched[, 3]),
                ending_offset = as.integer(matched[, 4]))
+}
+
+get_gene_sampling <- function(dna, partitions) {
+    gap_character <- as.raw(4)
+    gene_names <- partitions$gene
+
+    ret <- matrix(0,
+                  nrow = nrow(dna),
+                  ncol = length(gene_names),
+                  byrow = TRUE,
+                  dimnames = list(rownames(dna), gene_names)
+    )
+
+
+    # For each species
+    for (row in 1:nrow(dna)) {
+        # For each partition
+        for (i in 1:nrow(partitions)) {
+            part_range <- partitions$starting_offset[i]:partitions$ending_offset[i]
+            # Check for all gap characters
+            if (!all(dna[row, part_range] == gap_character)) {
+                ret[row, i] <- 1
+            }
+        }
+    }
+    ret
 }
