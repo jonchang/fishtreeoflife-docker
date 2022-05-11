@@ -1,10 +1,10 @@
 source("sequence_check_per_species.R")
 
-library(rjson)
+#library(rjson)
 
 library(ape)
 
-apply_df_list_genes_and_their_species <- function(partition_file, DNA_file){
+apply_df_vectors_genes_and_their_species <- function(partition_file, DNA_file){
   
   matrix_of_values <- sequence_check_per_species(partition_file, DNA_file)
   
