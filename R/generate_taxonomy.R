@@ -26,8 +26,11 @@ charsets <- readLines("downloads/final_alignment.partitions") %>% str_replace_al
 tiprates <- read_csv("downloads/tiprates.csv.xz")
 
 
-partition_file <- "downloads/final_alignment.phylip.xz"
-DNA_file <- "downloads/actinopt_full.trees.xz"
+Partition_fie <- "downloads/final_alignment.partitions"
+Final_alignment <- "downloads/final_alignment.phylip.xz"
+
+list_of_genes_and_species <- apply_df_vectors_genes_and_their_species(Partition_fie, Final_alignment)
+total_list_genes_and_their_species <- list(sampled_loci = list_of_genes_and_species)
 
 ## Correct tiprates names
 taxconvert <- read_csv("downloads/taxonConversion.csv") %>% mutate_all(str_replace_all, "_", " ") %>% filter(!is.na(fishbase))
@@ -59,8 +62,6 @@ two_col_to_list <- function(df) {
 }
 
 generate_rank_data <- function(df, current_rank, downloadpath) {
-    list_of_genes_and_species <- apply_df_vectors_genes_and_their_species(partition_file, DNA_file)
-    total_list_genes_and_their_species <- list(sampled_loci = list_of_genes_and_species)
     
     out <- list()
     out$species <- df$genus.species
