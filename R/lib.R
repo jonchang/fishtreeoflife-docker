@@ -68,3 +68,58 @@ parse_partitions <- function(partitions_file) {
                starting_offset = as.integer(matched[, 3]),
                ending_offset = as.integer(matched[, 4]))
 }
+
+
+apply_df_vectors_genes_and_their_species <- function(partition_file, DNA_file){
+  
+  matrix_of_values <- sequence_check_per_species(partition_file, DNA_file)
+  
+  total_list <- list()
+  
+  for (gene_name in colnames(matrix_of_values)) {
+    #comment explaing what this is doing
+    total_list[[gene_name]] <- names(which(matrix_of_values[, gene_name] == 1))
+  }
+  
+  return(total_list)
+}
+
+
+sequence_check_per_species <- function(partition_file, DNA_file){
+  
+  labridae_phylip.dna <- ape::read.dna(xzfile(DNA_file), format = "sequential", as.matrix = TRUE)
+  
+  partition_df <- parse_partitions(partition_file)
+  
+  vector_species <- vectorized_search_per_species(partition_df, labridae_phylip.dna)
+  
+  return(vector_species)
+}
+
+vectorized_search_per_species <- function(parsed_partition, full_genes){
+  gene_names <- parsed_partition$gene_Name
+  #First create a matrix to store if a species has a gene
+  mat1 <- matrix(0, 
+                 nrow=nrow(full_genes), 
+                 ncol=length(gene_names), 
+                 byrow=TRUE,
+                 dimnames = list(rownames(full_genes), gene_names)
+  )
+  
+  #This is the value for when there are no A's, C's, T's, or G's
+  gap_character <- as.raw(4)
+  
+  #Need to go through each species
+  for(row in 1:nrow(full_genes)){
+    #Go through all the sections from the partition file
+    for(i in 1:nrow(parsed_partition)){
+      #Go through all the sections from the partition file
+      if(all(full_genes[ row, parsed_partition[i, 2] : parsed_partition[i, 3] ] == gap_character) == FALSE){
+        #There was some nucletoide in the range
+        mat1[row, i] <- 1
+      }
+    }
+  }
+  
+  return(mat1)
+}
