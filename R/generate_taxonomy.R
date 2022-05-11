@@ -7,12 +7,9 @@ library(future)
 library(listenv)
 library(jsonlite)
 
-#library(rjson)
-#if ("rjson" %in% inst_packages[, 1]) update.packages("rjson")
-
 source("df_list_genes_and_their_species.R")
 
-source("apply_df_list_genes_and_their_species.R")
+source("apply_df_vector_genes_and_their_species.R")
 
 source("R/lib.R")
 

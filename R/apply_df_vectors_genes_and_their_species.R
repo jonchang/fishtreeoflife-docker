@@ -1,7 +1,5 @@
 source("sequence_check_per_species.R")
 
-#library(rjson)
-
 library(ape)
 
 apply_df_vectors_genes_and_their_species <- function(partition_file, DNA_file){
