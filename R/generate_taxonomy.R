@@ -25,7 +25,6 @@ dna %<-% scan("downloads/final_alignment.phylip.xz", what = list(character(), ch
 charsets <- readLines("downloads/final_alignment.partitions") %>% str_replace_all(fixed("DNA, "), "")
 tiprates <- read_csv("downloads/tiprates.csv.xz")
 
-print("")
 Partition_fie <- "downloads/final_alignment.partitions"
 Final_alignment <- "downloads/final_alignment.phylip.xz"
 
