@@ -26,6 +26,10 @@ dna %<-% scan("downloads/final_alignment.phylip.xz", what = list(character(), ch
 charsets <- readLines("downloads/final_alignment.partitions") %>% str_replace_all(fixed("DNA, "), "")
 tiprates <- read_csv("downloads/tiprates.csv.xz")
 
+# Get sampling info
+gene_sampling %<-% get_gene_sampling(read.dna("downloads/final_alignment.phylip.xz"), parse_partitions("downloads/final_alignment.partitions"))
+rownames(gene_sampling) <- str_replace_all(rownames(gene_sampling), "_", " ")
+
 ## Correct tiprates names
 taxconvert <- read_csv("downloads/taxonConversion.csv") %>% mutate_all(str_replace_all, "_", " ") %>% filter(!is.na(fishbase))
 
@@ -60,6 +64,7 @@ generate_rank_data <- function(df, current_rank, downloadpath) {
     out$species <- df$genus.species
     out$sampled_species <- out$species[out$species %in% tips]
     out$unsampled_species <- out$species[!out$species %in% tips]
+    out$gene_sampling <- gene_sampling[out$sampled_species, , drop = FALSE]
     taxonomy <- gather(df, key = "rank", value = "name", all_of(wanted_ranks)) %>% select(name, rank) %>% as.data.frame()
     out$taxonomy <- split(taxonomy, taxonomy$rank) %>% lapply(function(x) {
                x <- unique(x[["name"]])
@@ -107,7 +112,7 @@ generate_rank_data <- function(df, current_rank, downloadpath) {
         }
     }
 
-    no_unbox <- c("species", "unsampled_species" ,"sampled_species", "family", "order", "rogues", "tiprates_dr", "tiprates_bamm_lambda", "tiprates_bamm_mu", "taxonomy")
+    no_unbox <- c("species", "unsampled_species", "sampled_species", "gene_sampling", "family", "order", "rogues", "tiprates_dr", "tiprates_bamm_lambda", "tiprates_bamm_mu", "taxonomy")
     for (nn in names(out)) {
         if (!nn %in% no_unbox) out[[nn]] <- unbox(out[[nn]])
     }
