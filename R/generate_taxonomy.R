@@ -59,12 +59,20 @@ two_col_to_list <- function(df) {
     xx
 }
 
+matrix_to_list <- function(mat) {
+    xx <- list()
+    for (ii in colnames(mat)) {
+        xx[[ii]] <- rownames(mat)[mat[, ii] == 1]
+    }
+    xx
+}
+
 generate_rank_data <- function(df, current_rank, downloadpath) {
     out <- list()
     out$species <- df$genus.species
     out$sampled_species <- out$species[out$species %in% tips]
     out$unsampled_species <- out$species[!out$species %in% tips]
-    out$gene_sampling <- gene_sampling[out$sampled_species, , drop = FALSE]
+    out$gene_sampling <- matrix_to_list(gene_sampling[out$sampled_species, , drop = FALSE])
     taxonomy <- gather(df, key = "rank", value = "name", all_of(wanted_ranks)) %>% select(name, rank) %>% as.data.frame()
     out$taxonomy <- split(taxonomy, taxonomy$rank) %>% lapply(function(x) {
                x <- unique(x[["name"]])
