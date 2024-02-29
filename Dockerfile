@@ -20,11 +20,8 @@ COPY R/generate_taxonomy.R R/
 RUN Rscript R/generate_taxonomy.R
 
 COPY R/generate_monophyly.R R/monophy_minimal.R R/
-RUN Rscript R/generate_monophyly.R family \
-    && Rscript R/generate_monophyly.R order
-
-COPY R/generate_fossils.R R/
-RUN Rscript R/generate_fossils.R
+RUN Rscript R/generate_monophyly.R phylocode_J \
+    && Rscript R/generate_monophyly.R phylocode_H
 
 FROM alpine:3.19.1 AS files
 

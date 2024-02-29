@@ -20,7 +20,7 @@ plan(multicore)
 
 tre %<-% read.tree("downloads/actinopt_12k_treePL.tre.xz")
 tre2 %<-% read.tree("downloads/actinopt_12k_raxml.tre.xz")
-tax %<-% read_csv("downloads/PFC_taxonomy.csv.xz", col_types = cols(.default = "c"))
+tax %<-% read_csv("downloads/Near_Thacker.csv.xz", col_types = cols(.default = "c"))
 #fulltree %<-% read.tree("downloads/actinopt_full.trees.xz")
 dna %<-% scan("downloads/final_alignment.phylip.xz", what = list(character(), character()), quiet = TRUE, nlines = 11650, strip.white = TRUE, skip = 1)
 charsets <- readLines("downloads/final_alignment.partitions") %>% str_replace_all(fixed("DNA, "), "")
@@ -40,11 +40,7 @@ fixed <- transmute(matched, species = treeTaxon, lambda.tv, mu.tv, lambda.tc, mu
 # drop originals
 tiprates <- bind_rows(anti_join(tiprates, matched, by = "species"), fixed) %>% distinct()
 
-wanted_ranks <- c("class", "subclass", "infraclass", "megacohort",
-"supercohort", "cohort", "subcohort", "infracohort", "section",
-"subsection", "division", "subdivision", "series", "superorder",
-"order", "suborder", "infraorder", "family")
-
+wanted_ranks <- paste0("phylocode_", LETTERS[1:15])
 
 datapath <- "_data/taxonomy"
 

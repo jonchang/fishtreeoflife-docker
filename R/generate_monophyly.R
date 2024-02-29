@@ -15,7 +15,7 @@ OUTDIR <- "_data/monophyly"
 
 tre <- read.tree("downloads/actinopt_12k_treePL.tre.xz")
 
-tax_orig <- read_csv("downloads/PFC_taxonomy.csv.xz", col_types = cols(.default = "c")) %>% transmute(tip = gsub(" ", "_", genus.species), label = .data[[wanted_rank]])
+tax_orig <- read_csv("downloads/Near_Thacker_taxonomy.csv.xz", col_types = cols(.default = "c")) %>% transmute(tip = gsub(" ", "_", genus.species), label = .data[[wanted_rank]])
 
 tax <- tax_orig %>% filter(tip %in% tre$tip.label) %>% as.data.frame()
 
