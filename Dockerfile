@@ -26,7 +26,6 @@ RUN Rscript R/generate_monophyly.R phylocode_J \
 FROM alpine:3.19.1 AS files
 
 COPY --from=build assets /assets
-COPY --from=build _fossils /_fossils
 COPY --from=build _data /_data
 COPY --from=build downloads /downloads
 
