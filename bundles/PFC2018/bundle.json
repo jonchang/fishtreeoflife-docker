@@ -1,0 +1,50 @@
+{
+  "$schema": "https://fishtreeoflife.org/schema/bundle/v1.json",
+  "kind": "taxonomy",
+  "id": "PFC2018",
+  "title": "Phylogenetic Fish Classification",
+  "citation": "Rabosky, D. L., Chang, J., Title, P. O., Cowman, P. F., Sallan, L., Friedman, M., Kaschner, K., Garilao, C., Near, T. J., Coll, M., Alfaro, M. E. (2018). An inverse latitudinal gradient in speciation rate for marine fishes. Nature, 559(7714), 392–395.",
+  "doi": "10.1038/s41586-018-0273-1",
+  "license": "CC0-1.0",
+  "ranks": [
+    "superclass",
+    "class",
+    "subclass",
+    "infraclass",
+    "megacohort",
+    "supercohort",
+    "cohort",
+    "subcohort",
+    "infracohort",
+    "section",
+    "subsection",
+    "division",
+    "subdivision",
+    "series",
+    "superorder",
+    "order",
+    "suborder",
+    "infraorder",
+    "family",
+    "genus"
+  ],
+  "files": [
+    {
+      "role": "taxonomy",
+      "title": "Taxonomy spreadsheet",
+      "path": "../../downloads/PFC_taxonomy.csv.xz",
+      "format": "csv",
+      "bytes": 213456,
+      "sha256": "074ff977de01f6a618aedc735c9668523d76cfc5c518fa9c829a520b949265f5",
+      "species_column": "genus.species"
+    },
+    {
+      "role": "taxonomy_tree",
+      "title": "Taxonomy-only tree, used to generate ATA chronograms",
+      "path": "../../downloads/taxonomy.tre.xz",
+      "format": "newick",
+      "bytes": 181652,
+      "sha256": "6d3df06c768acc3a57bc1bc76bddfdb67d5069dfcbb23243f708a17de55d801b"
+    }
+  ]
+}

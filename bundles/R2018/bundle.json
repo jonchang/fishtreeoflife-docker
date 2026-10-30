@@ -1,0 +1,86 @@
+{
+  "$schema": "https://fishtreeoflife.org/schema/bundle/v1.json",
+  "kind": "release",
+  "id": "R2018",
+  "title": "Rabosky et al. 2018",
+  "citation": "Rabosky, D. L., Chang, J., Title, P. O., Cowman, P. F., Sallan, L., Friedman, M., Kaschner, K., Garilao, C., Near, T. J., Coll, M., Alfaro, M. E. (2018). An inverse latitudinal gradient in speciation rate for marine fishes. Nature, 559(7714), 392–395.",
+  "doi": "10.1038/s41586-018-0273-1",
+  "license": "CC0-1.0",
+  "native_taxonomy": "PFC2018",
+  "files": [
+    {
+      "role": "chronogram",
+      "title": "Timetree",
+      "path": "../../downloads/actinopt_12k_treePL.tre.xz",
+      "format": "newick",
+      "bytes": 169948,
+      "sha256": "543221541758e2bce063a5a76d6858f4f83a8a770225ee96c4292f7917188da2"
+    },
+    {
+      "role": "phylogram",
+      "title": "RAxML phylogram",
+      "path": "../../downloads/actinopt_12k_raxml.tre.xz",
+      "format": "newick",
+      "bytes": 310840,
+      "sha256": "306f83016a3ba172a8f415549093400ef11b36bb718a5b9f23e264e140681686"
+    },
+    {
+      "role": "support",
+      "title": "RAxML tree with SH-like support values",
+      "path": "../../downloads/actinopt_12k_support.tre.xz",
+      "format": "newick",
+      "bytes": 313732,
+      "sha256": "0e2a4d8649d9304b38614e8010702f7b52e21392cc19ea007f386c237e11a106"
+    },
+    {
+      "role": "complete_trees",
+      "title": "Complete \"all-taxon assembled\" chronograms",
+      "path": "../../downloads/actinopt_full.trees.xz",
+      "format": "newick",
+      "bytes": 34747684,
+      "sha256": "1dce6587bb33f341dc68f6356c447679387fe5c2785515b64a3b2be955ccdafe",
+      "taxonomy": "PFC2018",
+      "count": 100
+    },
+    {
+      "role": "tip_rates",
+      "title": "Computed diversification rates",
+      "path": "../../downloads/tiprates.csv.xz",
+      "format": "csv",
+      "bytes": 317524,
+      "sha256": "003c0e2701e30249357a8a33a1b7ad651cb5c71421bfc8f24e2877e2ed377bf0"
+    },
+    {
+      "role": "name_map",
+      "title": "Tree names to FishBase names",
+      "path": "../../downloads/taxonConversion.csv",
+      "format": "csv",
+      "bytes": 9305,
+      "sha256": "aa4d0bc9b9fb615cd5b8411ebb72351d2ee3ca7b43d688ca79f9e9084e47a05d"
+    },
+    {
+      "role": "alignment",
+      "title": "Full alignment",
+      "path": "../../downloads/final_alignment.phylip.xz",
+      "format": "phylip",
+      "bytes": 2763172,
+      "sha256": "e3bc380052ee0154bc649d3ba4618b8bd4c7807b01a119b37dec3199dd6e625e"
+    },
+    {
+      "role": "partitions",
+      "title": "Alignment partitions",
+      "path": "../../downloads/final_alignment.partitions",
+      "format": "raxml-partitions",
+      "bytes": 633,
+      "sha256": "33dca2eda41877148e5d3827db9e3e4bda1274c67db572e64166ef5e9d707617"
+    },
+    {
+      "role": "calibrations",
+      "title": "Fossil calibrations",
+      "path": "../../downloads/fossil_data.csv",
+      "format": "csv",
+      "bytes": 72224,
+      "sha256": "a00150a3b314b421d980ac8e82175fe57989800f7e01fda769df2944b1dc3c4e"
+    }
+  ]
+}

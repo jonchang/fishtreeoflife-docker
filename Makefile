@@ -6,3 +6,6 @@ build:
 
 files:
 	docker buildx build --output type=local,dest=$(OUT) .
+
+manifest:
+	docker buildx build --target manifest --output type=local,dest=$(OUT) .

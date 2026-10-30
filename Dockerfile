@@ -1,4 +1,20 @@
-FROM rocker/tidyverse:4.6.1@sha256:6b8523ae3b6a948b5d71c9ac3994026aeac2d79d7f1e7421102207e84534ceae AS build
+FROM rocker/tidyverse:4.6.1@sha256:6b8523ae3b6a948b5d71c9ac3994026aeac2d79d7f1e7421102207e84534ceae AS r
+
+# The manifest and schemas. `make manifest` builds only these.
+FROM r AS compile-manifest
+
+COPY downloads/* downloads/
+COPY bundles/ bundles/
+COPY R/generate_manifest.R R/
+RUN Rscript R/generate_manifest.R
+
+COPY schema/ schema/
+RUN mkdir /out && mv data schema /out/
+
+FROM scratch AS manifest
+COPY --from=compile-manifest /out/ /
+
+FROM r AS build
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
@@ -27,6 +43,7 @@ COPY R/generate_fossils.R R/
 RUN Rscript R/generate_fossils.R
 
 RUN mkdir /out && mv assets _fossils _data downloads /out/
+COPY --from=manifest / /out/
 
 # Data only: one layer, no base image.
 FROM scratch
