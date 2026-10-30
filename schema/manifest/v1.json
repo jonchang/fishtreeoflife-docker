@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fishtreeoflife.org/schema/manifest/v1.json",
+  "title": "Fish Tree of Life data manifest",
+  "description": "Every tree release and taxonomy on fishtreeoflife.org, with each file's URL, size and sha256. URLs are relative to the manifest. Readers should refuse a schema_version they don't know, and ignore properties and file roles they don't know.",
+  "type": "object",
+  "required": ["schema_version", "default_release", "releases", "taxonomies"],
+  "properties": {
+    "$schema": {"type": "string"},
+    "schema_version": {"const": 1},
+    "default_release": {
+      "description": "The release the website shows first. Software should pin its own default instead.",
+      "$ref": "#/$defs/id"
+    },
+    "releases": {"type": "array", "items": {"$ref": "#/$defs/release"}, "minItems": 1},
+    "taxonomies": {"type": "array", "items": {"$ref": "#/$defs/taxonomy"}, "minItems": 1}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Z][A-Za-z0-9]*$"},
+    "doi": {"type": "string", "pattern": "^10\\.[0-9]{4,9}/\\S+$"},
+    "release": {
+      "type": "object",
+      "required": ["id", "title", "status", "citation", "license", "native_taxonomy", "views", "files"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "title": {"type": "string", "minLength": 1},
+        "status": {"enum": ["preview", "stable", "superseded"]},
+        "citation": {"type": "string", "minLength": 1},
+        "doi": {"$ref": "#/$defs/doi"},
+        "license": {"description": "SPDX license identifier.", "type": "string", "minLength": 1},
+        "native_taxonomy": {"$ref": "#/$defs/id"},
+        "views": {
+          "description": "The taxonomies this release can be browsed by.",
+          "type": "array",
+          "items": {"$ref": "#/$defs/view"},
+          "minItems": 1
+        },
+        "files": {"type": "array", "items": {"$ref": "#/$defs/file"}, "minItems": 1}
+      }
+    },
+    "view": {
+      "type": "object",
+      "required": ["taxonomy"],
+      "properties": {
+        "taxonomy": {"$ref": "#/$defs/id"},
+        "legacy_api": {
+          "description": "Base URL of the frozen per-taxon JSON API (/api/taxonomy/), which exists only for R2018 with PFC2018.",
+          "type": "string",
+          "format": "uri-reference"
+        }
+      }
+    },
+    "taxonomy": {
+      "type": "object",
+      "required": ["id", "title", "citation", "license", "files"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "title": {"type": "string", "minLength": 1},
+        "citation": {"type": "string", "minLength": 1},
+        "doi": {"$ref": "#/$defs/doi"},
+        "license": {"description": "SPDX license identifier.", "type": "string", "minLength": 1},
+        "ranks": {
+          "description": "The ranks, highest first.",
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "files": {"type": "array", "items": {"$ref": "#/$defs/file"}, "minItems": 1}
+      }
+    },
+    "file": {
+      "type": "object",
+      "required": ["role", "url", "format", "bytes", "sha256"],
+      "properties": {
+        "role": {
+          "description": "What the file holds, e.g. chronogram, phylogram, support, complete_trees, tip_rates, name_map, alignment, partitions, calibrations, taxonomy or taxonomy_tree.",
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$"
+        },
+        "title": {"type": "string", "minLength": 1},
+        "url": {"description": "Relative to the manifest. Compression comes from the extension.", "type": "string", "format": "uri-reference"},
+        "format": {"description": "The content's format, e.g. newick, csv, phylip or raxml-partitions.", "type": "string"},
+        "bytes": {"type": "integer", "minimum": 0},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "taxonomy": {"description": "complete_trees only: the taxonomy used to place unsampled species.", "$ref": "#/$defs/id"},
+        "count": {"description": "complete_trees only: the number of trees.", "type": "integer", "minimum": 1},
+        "species_column": {"description": "taxonomy only: the species column. The other columns are the ranks.", "type": "string"}
+      }
+    }
+  }
+}

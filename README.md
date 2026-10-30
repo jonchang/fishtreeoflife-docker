@@ -8,9 +8,23 @@ The build is reproducible: the base image is pinned by digest and file timestamp
 - On a pull request, the job summary says whether the data differs from `master`.
 - The weekly build fails if rebuilding `master` changes the data.
 
+Before building the image, CI checks the bundles and the manifest against the schemas.
+
+## Bundles and the manifest
+
+Each tree release and taxonomy is a bundle: `bundles/{id}/bundle.json` lists its files in `downloads/` with their size and sha256. A bundle never changes once published; new data means a new bundle. `bundles/catalog.json` lists the bundles to publish, each release's status and taxonomies, and the website's default release.
+
+The build checks every file against its bundle and writes `/data/manifest.json`, which lists every release and taxonomy with each file's URL, size and sha256. `schema/` holds the JSON Schemas for bundles and the manifest, for the website to serve at `https://fishtreeoflife.org/schema/{name}/v1.json`.
+
 ## Building locally
 
-Write the data files to `out/`, for the website's `scripts/fetch-data.sh --from out`:
+Write just the manifest and schemas to `out/`, which takes seconds:
+
+```
+make manifest
+```
+
+Write all the data files to `out/`, for the website's `scripts/fetch-data.sh --from out`:
 
 ```
 make files

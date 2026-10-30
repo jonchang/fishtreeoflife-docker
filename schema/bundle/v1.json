@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://fishtreeoflife.org/schema/bundle/v1.json",
+  "title": "Fish Tree of Life bundle",
+  "description": "The raw files of one tree release or one taxonomy. A published bundle never changes; new data means a new bundle.",
+  "type": "object",
+  "required": ["kind", "id", "title", "citation", "license", "files"],
+  "properties": {
+    "$schema": {"const": "https://fishtreeoflife.org/schema/bundle/v1.json"},
+    "kind": {"enum": ["release", "taxonomy"]},
+    "id": {"$ref": "#/$defs/id"},
+    "title": {"type": "string", "minLength": 1},
+    "citation": {"type": "string", "minLength": 1},
+    "doi": {"$ref": "#/$defs/doi"},
+    "license": {"description": "SPDX license identifier.", "type": "string", "minLength": 1},
+    "native_taxonomy": {
+      "description": "Releases only: the taxonomy the tree was built with.",
+      "$ref": "#/$defs/id"
+    },
+    "ranks": {
+      "description": "Taxonomies only: the ranks, highest first.",
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "files": {"type": "array", "items": {"$ref": "#/$defs/file"}, "minItems": 1}
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {"properties": {"kind": {"const": "release"}}},
+      "then": {
+        "required": ["native_taxonomy"],
+        "properties": {
+          "ranks": false,
+          "files": {
+            "items": {
+              "properties": {
+                "role": {
+                  "enum": ["chronogram", "phylogram", "support", "complete_trees", "tip_rates", "name_map", "alignment", "partitions", "calibrations"]
+                }
+              }
+            },
+            "contains": {"properties": {"role": {"const": "chronogram"}}}
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"kind": {"const": "taxonomy"}}},
+      "then": {
+        "required": ["ranks"],
+        "properties": {
+          "native_taxonomy": false,
+          "files": {
+            "items": {"properties": {"role": {"enum": ["taxonomy", "taxonomy_tree"]}}},
+            "contains": {"properties": {"role": {"const": "taxonomy"}}}
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Z][A-Za-z0-9]*$"},
+    "doi": {"type": "string", "pattern": "^10\\.[0-9]{4,9}/\\S+$"},
+    "file": {
+      "type": "object",
+      "required": ["role", "path", "format", "bytes", "sha256"],
+      "properties": {
+        "role": {"type": "string"},
+        "title": {"type": "string", "minLength": 1},
+        "path": {"description": "Relative to bundle.json. Compression comes from the extension.", "type": "string", "minLength": 1},
+        "format": {"enum": ["newick", "csv", "phylip", "raxml-partitions"]},
+        "bytes": {"type": "integer", "minimum": 0},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "taxonomy": {"description": "complete_trees only: the taxonomy used to place unsampled species.", "$ref": "#/$defs/id"},
+        "count": {"description": "complete_trees only: the number of trees.", "type": "integer", "minimum": 1},
+        "species_column": {"description": "taxonomy only: the species column. The other columns are the ranks.", "type": "string", "minLength": 1}
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {"properties": {"role": {"const": "complete_trees"}}},
+          "then": {"required": ["taxonomy", "count"]}
+        },
+        {
+          "if": {"properties": {"role": {"const": "taxonomy"}}},
+          "then": {"required": ["species_column"], "properties": {"format": {"const": "csv"}}}
+        }
+      ]
+    }
+  }
+}

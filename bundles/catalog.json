@@ -1,0 +1,15 @@
+{
+  "default_release": "R2018",
+  "releases": [
+    {
+      "id": "R2018",
+      "status": "stable",
+      "views": [
+        {"taxonomy": "PFC2018", "legacy_api": "../api/taxonomy/"}
+      ]
+    }
+  ],
+  "taxonomies": [
+    {"id": "PFC2018"}
+  ]
+}
