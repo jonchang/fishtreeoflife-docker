@@ -1,27 +1,31 @@
 # fishtreeoflife-docker
 
-## Updating the Docker image
+GitHub Actions builds this image on every push and weekly, and publishes it to `ghcr.io/jonchang/fishtreeoflife-docker`, tagged with the branch name and commit SHA. The [website build](https://github.com/jonchang/fishtreeoflife.org) pulls `ghcr.io/jonchang/fishtreeoflife-docker:master`.
+
+## Building the Docker image locally
 
 ```
-docker build -t jonchang/fishtreeoflife-docker:master .
-docker push jonchang/fishtreeoflife-docker:master
+make build
 ```
 
 ## Inspecting the image interactively
 
 ```
-docker run -it jonchang/fishtreeoflife-docker:master
+make run
 ```
 
 ## Copying a file
 
 ```
-docker run --rm --entrypoint cat jonchang/fishtreeoflife-docker:master  /path/to/file > path/to/destination
+docker run --rm --entrypoint cat ghcr.io/jonchang/fishtreeoflife-docker:master /path/to/file > path/to/destination
 ```
-
 
 ## Building without cache
 
 ```
-docker build -t jonchang/fishtreeoflife-docker:master .
+docker build --no-cache -t ghcr.io/jonchang/fishtreeoflife-docker:master .
 ```
+
+## Pushing manually
+
+CI normally publishes the image. To push a local build, log in with `docker login ghcr.io` first, then run `make push`.

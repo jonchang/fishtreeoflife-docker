@@ -1,8 +1,10 @@
+IMAGE ?= ghcr.io/jonchang/fishtreeoflife-docker:master
+
 run:
-	docker run -it jonchang/fishtreeoflife-docker:latest
+	docker run -it $(IMAGE)
 
 build:
-	docker build -t jonchang/fishtreeoflife-docker:latest .
+	docker build -t $(IMAGE) .
 
 push:
-	docker push jonchang/fishtreeoflife-docker:latest
+	docker push $(IMAGE)
