@@ -12,6 +12,16 @@ on:
       - 'master'
     paths-ignore:
       - '*.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  IMAGE: ghcr.io/jonchang/fishtreeoflife-docker
+  # Fixed timestamps, so the digest depends only on the data.
+  SOURCE_DATE_EPOCH: 0
 
 jobs:
   build:
@@ -22,25 +32,57 @@ jobs:
     - uses: docker/metadata-action@v6
       id: meta
       with:
-        images: |
-          ghcr.io/jonchang/fishtreeoflife-docker
+        images: ${{ env.IMAGE }}
         tags: |
-          type=schedule
           type=ref,event=branch
           type=sha
 
     - uses: docker/setup-buildx-action@v4
 
-    - uses: docker/login-action@v4
-      if: github.event_name != 'pull_request'
-      with:
-        registry: ghcr.io
-        username: ${{ github.repository_owner }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-
     - uses: docker/build-push-action@v7
       with:
         context: .
-        push: ${{ github.event_name != 'pull_request' }}
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
+        platforms: linux/amd64
+        provenance: false
+        outputs: type=oci,dest=${{ runner.temp }}/image.tar,rewrite-timestamp=true
+
+    - name: Compare with the published image
+      id: compare
+      env:
+        TAG: ${{ github.event_name == 'pull_request' && github.base_ref || steps.meta.outputs.version }}
+      run: |
+        archive="oci-archive:$RUNNER_TEMP/image.tar"
+        digest="$(skopeo inspect "$archive" | jq -r .Digest)"
+        layers="$(skopeo inspect --config "$archive" | jq -r '.rootfs.diff_ids | join(" ")')"
+        if published="$(skopeo inspect --config "docker://$IMAGE:$TAG")"; then
+          published="$(jq -r '.rootfs.diff_ids | join(" ")' <<<"$published")"
+        else
+          published=""
+        fi
+        if [ "$layers" = "$published" ]; then changed=false; else changed=true; fi
+        echo "changed=$changed" >> "$GITHUB_OUTPUT"
+        {
+          echo "| | |"
+          echo "|---|---|"
+          echo "| Digest | \`$digest\` |"
+          echo "| Data layer | \`$layers\` |"
+          echo "| Compared with | \`$IMAGE:$TAG\` |"
+          echo "| Data changed | $changed |"
+        } >> "$GITHUB_STEP_SUMMARY"
+
+    - name: Fail if a rebuild changed the data
+      if: github.event_name == 'schedule' && steps.compare.outputs.changed == 'true'
+      run: |
+        echo "::error::Rebuilding $GITHUB_SHA changed the data in $IMAGE:master, so the build is not reproducible."
+        exit 1
+
+    - name: Publish
+      if: steps.compare.outputs.changed == 'true' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+      env:
+        TAGS: ${{ steps.meta.outputs.tags }}
+        TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        skopeo login ghcr.io -u "$GITHUB_REPOSITORY_OWNER" --password-stdin <<<"$TOKEN"
+        for tag in $TAGS; do
+          skopeo copy --preserve-digests "oci-archive:$RUNNER_TEMP/image.tar" "docker://$tag"
+        done
