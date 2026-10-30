@@ -1,4 +1,4 @@
-FROM rocker/tidyverse:4.6.1 AS build
+FROM rocker/tidyverse:4.6.1@sha256:6b8523ae3b6a948b5d71c9ac3994026aeac2d79d7f1e7421102207e84534ceae AS build
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
@@ -26,11 +26,12 @@ RUN Rscript R/generate_monophyly.R family \
 COPY R/generate_fossils.R R/
 RUN Rscript R/generate_fossils.R
 
-FROM alpine:3.24.3 AS files
+RUN mkdir /out && mv assets _fossils _data downloads /out/
 
-COPY --from=build assets /assets
-COPY --from=build _fossils /_fossils
-COPY --from=build _data /_data
-COPY --from=build downloads /downloads
+# Data only: one layer, no base image.
+FROM scratch
 
-CMD ["sh"]
+LABEL org.opencontainers.image.source="https://github.com/jonchang/fishtreeoflife-docker" \
+      org.opencontainers.image.description="Build data for fishtreeoflife.org"
+
+COPY --from=build /out/ /

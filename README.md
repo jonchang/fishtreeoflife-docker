@@ -1,31 +1,31 @@
 # fishtreeoflife-docker
 
-GitHub Actions builds this image on every push and weekly, and publishes it to `ghcr.io/jonchang/fishtreeoflife-docker`, tagged with the branch name and commit SHA. The [website build](https://github.com/jonchang/fishtreeoflife.org) pulls `ghcr.io/jonchang/fishtreeoflife-docker:master`.
+Builds the data for [fishtreeoflife.org](https://github.com/jonchang/fishtreeoflife.org) and publishes it as a single-layer image at `ghcr.io/jonchang/fishtreeoflife-docker`. The image holds only data files, with no base image or shell, so it can't be run.
 
-## Building the Docker image locally
+The build is reproducible: the base image is pinned by digest and file timestamps are fixed, so the image digest changes only when the data does. GitHub Actions builds every push and compares the result with the published tag:
+
+- On a push, it publishes the branch and `sha-` tags only if the data changed.
+- On a pull request, the job summary says whether the data differs from `master`.
+- The weekly build fails if rebuilding `master` changes the data.
+
+## Building locally
+
+Write the data files to `out/`, for the website's `scripts/fetch-data.sh --from out`:
+
+```
+make files
+```
+
+Or build the image itself:
 
 ```
 make build
 ```
 
-## Inspecting the image interactively
+## Copying a file from the published image
 
 ```
-make run
+docker create --name fishtree-data --platform linux/amd64 ghcr.io/jonchang/fishtreeoflife-docker:master /bin/true
+docker cp fishtree-data:/downloads/tiprates.csv.xz .
+docker rm fishtree-data
 ```
-
-## Copying a file
-
-```
-docker run --rm --entrypoint cat ghcr.io/jonchang/fishtreeoflife-docker:master /path/to/file > path/to/destination
-```
-
-## Building without cache
-
-```
-docker build --no-cache -t ghcr.io/jonchang/fishtreeoflife-docker:master .
-```
-
-## Pushing manually
-
-CI normally publishes the image. To push a local build, log in with `docker login ghcr.io` first, then run `make push`.

@@ -3,7 +3,7 @@ updates:
 - package-ecosystem: docker
   directory: "/"
   schedule:
-    interval: daily
+    interval: weekly
   assignees:
   - jonchang
 - package-ecosystem: github-actions

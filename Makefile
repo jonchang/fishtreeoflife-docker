@@ -1,10 +1,8 @@
 IMAGE ?= ghcr.io/jonchang/fishtreeoflife-docker:master
-
-run:
-	docker run -it $(IMAGE)
+OUT ?= out
 
 build:
 	docker build -t $(IMAGE) .
 
-push:
-	docker push $(IMAGE)
+files:
+	docker buildx build --output type=local,dest=$(OUT) .
