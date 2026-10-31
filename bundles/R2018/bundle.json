@@ -47,8 +47,8 @@
       "title": "Computed diversification rates",
       "path": "../../downloads/tiprates.csv.xz",
       "format": "csv",
-      "bytes": 317524,
-      "sha256": "003c0e2701e30249357a8a33a1b7ad651cb5c71421bfc8f24e2877e2ed377bf0"
+      "bytes": 321364,
+      "sha256": "8421ed2adb1a1924e6cb221ecca05a3aac6a7c541eb8907ed3f63b11258343ea"
     },
     {
       "role": "name_map",

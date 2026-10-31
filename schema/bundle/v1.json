@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://fishtreeoflife.org/schema/bundle/v1.json",
   "title": "Fish Tree of Life bundle",
-  "description": "The raw files of one tree release or one taxonomy. A published bundle never changes; new data means a new bundle.",
+  "description": "The raw files of one tree release or one taxonomy. A published bundle's files change only to correct errors; new data means a new bundle.",
   "type": "object",
   "required": ["kind", "id", "title", "citation", "license", "files"],
   "properties": {

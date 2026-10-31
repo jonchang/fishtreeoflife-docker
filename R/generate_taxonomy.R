@@ -30,15 +30,10 @@ tiprates <- read_csv("downloads/tiprates.csv.xz")
 gene_sampling %<-% get_gene_sampling(read.dna("downloads/final_alignment.phylip.xz"), parse_partitions("downloads/final_alignment.partitions"))
 rownames(gene_sampling) <- str_replace_all(rownames(gene_sampling), "_", " ")
 
-## Correct tiprates names
+## The frozen legacy API lists species renamed from FishBase names last
 taxconvert <- read_csv("downloads/taxonConversion.csv") %>% mutate_all(str_replace_all, "_", " ") %>% filter(!is.na(fishbase))
-
-# get matching tip rates names
-matched <- inner_join(tiprates, taxconvert, by = c(species = "fishbase"))
-fixed <- transmute(matched, species = treeTaxon, lambda.tv, mu.tv, lambda.tc, mu.tc, dr)
-
-# drop originals
-tiprates <- bind_rows(anti_join(tiprates, matched, by = "species"), fixed) %>% distinct()
+renamed <- tiprates$species %in% taxconvert$treeTaxon
+tiprates <- bind_rows(tiprates[!renamed, ], tiprates[renamed, ])
 
 wanted_ranks <- c("class", "subclass", "infraclass", "megacohort",
 "supercohort", "cohort", "subcohort", "infracohort", "section",

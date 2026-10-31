@@ -12,7 +12,7 @@ Before building the image, CI checks the bundles and the manifest against the sc
 
 ## Bundles and the manifest
 
-Each tree release and taxonomy is a bundle: `bundles/{id}/bundle.json` lists its files in `downloads/` with their size and sha256. A bundle never changes once published; new data means a new bundle. `bundles/catalog.json` lists the bundles to publish, each release's status and taxonomies, and the website's default release.
+Each tree release and taxonomy is a bundle: `bundles/{id}/bundle.json` lists its files in `downloads/` with their size and sha256. Once published, a bundle's files change only to correct errors, such as misnamed species; new data means a new bundle. `bundles/catalog.json` lists the bundles to publish, each release's status and taxonomies, and the website's default release.
 
 The build checks every file against its bundle and writes `/data/manifest.json`, which lists every release and taxonomy with each file's URL, size and sha256. `schema/` holds the JSON Schemas for bundles and the manifest, for the website to serve at `https://fishtreeoflife.org/schema/{name}/v1.json`.
 
