@@ -1,4 +1,4 @@
-FROM rocker/tidyverse:4.6.2@sha256:bdf8e2bd8aa43758e0d5663e0df04fa32bcf6394edc5862439e02a195772e9f0 AS r
+FROM rocker/tidyverse:4.6.2@sha256:9241ac461c924334777dd3fb047c6e5e0fd1435a85acc171f1a32836861d0a69 AS r
 
 # The manifest and schemas. `make manifest` builds only these.
 FROM r AS compile-manifest
